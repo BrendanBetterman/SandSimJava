@@ -1,3 +1,4 @@
+
 import java.util.Random;
 public class Sand{
     private Random rand = new Random();
@@ -6,15 +7,22 @@ public class Sand{
     public Sand(int[][] grid){
         this.sand = grid;
     }
+    public void remove(int x,int y){
+        this.sand[x][y] = 0;
+        if(rowsFilled >= x ){
+            rowsFilled =x -1;
+        }
+    }
+    
     public void add(int x,int y){
         this.sand[x][y] = 1;
     }
     public void add(){
-        this.add(rand.nextInt(sand.length-rowsFilled)+rowsFilled,rand.nextInt(sand[0].length));
+        if(sand.length-rowsFilled >0){
+            this.add(rand.nextInt(sand.length-rowsFilled)+rowsFilled,rand.nextInt(sand[0].length));
+        }
     }
-    public void remove(int x, int y){
-        this.sand[x][y] = 0;
-    }
+    
     private void swap(int x1,int y1,int x2,int y2){
         this.sand[x1][y1] = 0;
         this.sand[x2][y2] = 1;
@@ -25,6 +33,13 @@ public class Sand{
             temp+=row[i];
         }
         return temp == row.length;
+    }
+    private boolean canMove(int x, int y){
+        if (x >0 && x<this.sand.length-1){
+            //wips
+        }
+        
+        return true;
     }
     public void update(){
         for(int i=rowsFilled; i<sand.length; i++){
@@ -44,23 +59,29 @@ public class Sand{
                         swap(i, u, i-1, u);
                     }else {
                         //both side are open randomly pick side.
-                        try{
-                        if(sand[i-1][u-1]==0 && sand[i-1][u+1]==0){
-                            if(rand.nextBoolean()){
+                        if(u!=sand[0].length-1 && u!=0){
+                            if(sand[i-1][u-1]==0 && sand[i-1][u+1]==0 ){
+                                if(rand.nextBoolean()){
+                                    swap(i, u, i-1, u+1);
+                                }else{
+                                    swap(i, u, i-1, u-1);
+                                }
+                            }else if(sand[i-1][u-1]==0){
+                                swap(i, u, i-1, u-1);
+                            }else if(sand[i-1][u+1]==0){
                                 swap(i, u, i-1, u+1);
                             }else{
-                                swap(i, u, i-1, u-1);
+                                //do nothing
                             }
-                        }else if(sand[i-1][u-1]==0){
-                            swap(i, u, i-1, u-1);
-                        }else if(sand[i-1][u+1]==0){
-                            swap(i, u, i-1, u+1);
                         }else{
-                            //do nothing
-                        }
-                    }catch (Exception e){
-
-                    }
+                            if(u!=0){
+                                if(sand[i-1][u-1]==0){
+                                    swap(i, u, i-1, u-1);
+                                }
+                            }else if(sand[i-1][u+1]==0){
+                                swap(i, u, i-1, u+1);
+                            }
+                        }  
                     }
                 }
             }

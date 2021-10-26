@@ -1,9 +1,11 @@
+
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -16,7 +18,8 @@ public class SandSim {
 
 	// The window handle
 	private long window;
-
+    private int S_width;
+    private int S_height;
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 		//System.out.println("Hellow LWJGL");
@@ -47,7 +50,7 @@ public class SandSim {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(640, 640, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(720, 720, "Hello World!", NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -67,7 +70,7 @@ public class SandSim {
 
 			// Get the resolution of the primary monitor
 			GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
+            
 			// Center the window
 			glfwSetWindowPos(
 				window,
@@ -84,7 +87,18 @@ public class SandSim {
 		// Make the window visible
 		glfwShowWindow(window);
 	}
-
+    
+	public static double getCursorPosX(long windowID) {
+		DoubleBuffer posX = BufferUtils.createDoubleBuffer(1);
+		glfwGetCursorPos(windowID, posX, null);
+		return posX.get(0);
+	}
+	public static double getCursorPosY(long windowID) {
+		DoubleBuffer posY = BufferUtils.createDoubleBuffer(1);
+		glfwGetCursorPos(windowID, null, posY);
+		return posY.get(0);
+	}
+    
 	private void loop() {
 		// This line is critical for LWJGL's interoperation with GLFW's
 		// OpenGL context, or any context that is managed externally.
@@ -95,48 +109,54 @@ public class SandSim {
 
 		Random rand = new Random();
 		float[] oldRGB = new float[]{0.0f,0.0f,0.0f};
-		float[] newRGB = randFloatArray(rand, 3);
-		
+		float[] newRGB = NumJa.randFloatArray(rand, 3);
+		int height = 720;
+		int width = 720;
 
 		// Set the clear color
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity(); // Resets any previous projection matrices
-		glOrtho(0, 640, 0, 640, 1, 0);
+		glOrtho(0, height, 0, width, 1, 0);
 		
 		glMatrixMode(GL_MODELVIEW);
-		Sand sand = new Sand(new int[32][32]);
+		float gridSize =10.0f;
+		Sand sand = new Sand(new int[height/(int)gridSize][width/(int)gridSize]);
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		sand.add();
 
 		float rot =0f;
 		int nframes =0;
+		
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-			
 			nframes+=1;
+			
 			if (nframes %2 ==0){
-				sand.add();
-				sand.update();
-				//printArray(sand.sand);
-				oldRGB = lerp(oldRGB,newRGB,0.05f);
+                sand.update();
+				oldRGB = NumJa.lerp(oldRGB,newRGB,0.05f);
 				if (oldRGB[0] > newRGB[0] -0.0001f){
-					newRGB = randFloatArray(rand, 3);
+					newRGB = NumJa.randFloatArray(rand, 3);
 				}
-				
+               
+				int cursorX = (int)getCursorPosX(window)/(int)gridSize;
+					int cursorY = (int)getCursorPosY(window)/(int)gridSize;
+					if (!(cursorX < 0 || cursorX > sand.sand[0].length-1 || sand.sand[0].length-1-cursorY < 0 || sand.sand[0].length-1-cursorY > sand.sand.length-1)){
+						sand.add(S_height/(int)gridSize -1- cursorY + sand.sand[0].length,cursorX);
+					}
+                System.out.println(S_height/(int)gridSize - cursorY + sand.sand[0].length);
 			}
-			//drawMatrix(sand.sand, 20.0f);
-			drawSand(sand,20.0f);
-	
+           
+			drawSand(sand,gridSize);
+            //drawSands(sand,gridSize);
+
 			glfwSwapBuffers(window); // swap the color buffers
 			glClearColor(oldRGB[0],oldRGB[1],oldRGB[2],0.0f);
-			// Poll for window events. The key callback above will only be
-			// invoked during this call.
 			glfwPollEvents();
 		}
 	}
-	private void drawSand(Sand sand,float gridSize){
+	private void drawSands(Sand sand,float gridSize){
 		for(int i=sand.rowsFilled; i<sand.sand.length; i++){
 			for(int u=0; u<sand.sand[0].length; u++){
 				if( !(sand.sand[i][u] == 0)){
@@ -146,8 +166,14 @@ public class SandSim {
 		}
 		drawQuad(0.0f, 0.0f, (float)sand.sand[0].length * gridSize, (float)sand.rowsFilled * gridSize);
 	}
+	private void drawSand(Sand sand,float gridSize){
+		int[][] c = NumJa.findHCluster(sand.sand, sand.rowsFilled);
+		for(int i=0; i<c.length; i++){
+			drawQuad((float)(c[i][0])*gridSize,(float)(c[i][2])*gridSize,(float)(c[i][1]+1)*gridSize,gridSize);
+        }
+		drawQuad(0.0f, 0.0f, (float)sand.sand[0].length * gridSize, (float)sand.rowsFilled * gridSize);
+	}
 	private void drawMatrix(int[][] array,float gridSize){
-		//wip Should draw only clusters as polygons instead of new quads
 		for(int i=0; i<array.length;i++){
 			for (int u=0; u<array[0].length; u++){
 				if( !(array[i][u] == 0)){
@@ -157,6 +183,8 @@ public class SandSim {
 		}
 	}
 	private void drawQuad(float x,float y, float width,float height){
+		Random rand = new Random();
+		//float temp = rand.nextFloat();
 		glColor3f(0.0f,0.0f,0.0f);
 		glBegin(GL_POLYGON);
 		glVertex2f(x, y);
@@ -166,39 +194,8 @@ public class SandSim {
 		glEnd();
 		glFlush(); 
 	}
-	private void printArray(float[] o){
-		for(int i =0; i<o.length; i++){
-			System.out.print(o[i] + ", ");
-		}
-		System.out.print("\n");
-	}
-	private void printArray(int[][] o){
-		for(int i =0; i<o.length; i++){
-			for(int u=0; u<o[0].length; u++){
-				System.out.print(o[i][u] + ", ");
-			}
-			System.out.print("\n");
-		}
-		System.out.print("\n");
-	}
-	private float[] randFloatArray(Random rand,int len){
-		float[] temp = new float[len];
-		for (int i=0; i<len; i++){
-			temp[i] = rand.nextFloat();
-		}
-		return temp;
-	}
-	private float[] lerp(float[]a,float[] b, float f){
-		for (int i=0; i<a.length; i++){
-			a[i] = lerp(a[i],b[i],f);
-		}
-		return a;
-	}
-	private float lerp(float a, float b, float f)
-	{
-		return a + f * (b - a);
-	}
-
+	
+	
 	public static void main(String[] args) {
 		new SandSim().run();
 		
