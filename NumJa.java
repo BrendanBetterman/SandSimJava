@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Random;
 public class NumJa{
@@ -27,6 +28,20 @@ public class NumJa{
 		return out + "]\n";
 	}
 	public static String stringArray(int[][] o){
+        String out ="[";
+		for(int i =0; i<o.length; i++){
+			out += stringArray(o[i]);
+		}
+		return out + "]\n";
+	}
+    public static String stringArray(float[] o){
+        String out = "[";
+		for(int i =0; i<o.length; i++){
+            out+=String.valueOf(o[i]) +", ";
+		}
+		return out + "]\n";
+	}
+    public static String stringArray(float[][] o){
         String out ="[";
 		for(int i =0; i<o.length; i++){
 			out += stringArray(o[i]);

@@ -17,9 +17,11 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class SandSim {
 
 	// The window handle
-	private long window;
+	public static long window;
     private int S_width;
     private int S_height;
+	private IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+	private IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 		//System.out.println("Hellow LWJGL");
@@ -112,85 +114,93 @@ public class SandSim {
 		float[] newRGB = NumJa.randFloatArray(rand, 3);
 		int height = 720;
 		int width = 720;
-
+		GameLoop gameLoop = new GameLoop(5);
 		// Set the clear color
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity(); // Resets any previous projection matrices
 		glOrtho(0, height, 0, width, 1, 0);
-		
+
+		IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        
 		glMatrixMode(GL_MODELVIEW);
 		float gridSize =10.0f;
 		Sand sand = new Sand(new int[height/(int)gridSize][width/(int)gridSize]);
+
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
-		sand.add();
 
 		float rot =0f;
 		int nframes =0;
 		
 		while ( !glfwWindowShouldClose(window) ) {
+
+			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 			nframes+=1;
 			
-			if (nframes %2 ==0){
-                sand.update();
+			if (nframes %1 ==0){
+				/*Sync screen
+				glfwGetWindowSize(SandSim.window,widthBuffer,heightBuffer);
+        		int Cheight = heightBuffer.get(0);
+				int Cwidth = widthBuffer.get(0);
+				glViewport(0, 0, Cwidth, Cheight);
+				*/
+				//sand.add(70,width/(int)2/(int)gridSize);
+				
+               // glfwGetWindowSize(window,null,heightBuffer);
+               // S_height = heightBuffer.get(0);
+                //sand.update();
 				oldRGB = NumJa.lerp(oldRGB,newRGB,0.05f);
 				if (oldRGB[0] > newRGB[0] -0.0001f){
 					newRGB = NumJa.randFloatArray(rand, 3);
-				}
-               
+				}/*
 				int cursorX = (int)getCursorPosX(window)/(int)gridSize;
-					int cursorY = (int)getCursorPosY(window)/(int)gridSize;
-					if (!(cursorX < 0 || cursorX > sand.sand[0].length-1 || sand.sand[0].length-1-cursorY < 0 || sand.sand[0].length-1-cursorY > sand.sand.length-1)){
-						sand.add(S_height/(int)gridSize -1- cursorY + sand.sand[0].length,cursorX);
-					}
-                System.out.println(S_height/(int)gridSize - cursorY + sand.sand[0].length);
-			}
+				int cursorY = (int)getCursorPosY(window)/(int)gridSize;
+				int relCurY = (height)/(int)gridSize -1- cursorY + (S_height - height)/(int)gridSize;
+				if (!(cursorX < 0 || cursorX > sand.sand[0].length-1 || relCurY < 0 || relCurY > sand.sand.length-1)){
+					sand.add(cursorX,relCurY);
+				}*/
+				gameLoop.update();
+				gameLoop.update();
+				gameLoop.update();
+            }
+			drawSandArray(gameLoop.draw(),gridSize,gameLoop.getOffset());
+           	
+			//drawSand(sand,gridSize,0);
            
-			drawSand(sand,gridSize);
-            //drawSands(sand,gridSize);
 
 			glfwSwapBuffers(window); // swap the color buffers
 			glClearColor(oldRGB[0],oldRGB[1],oldRGB[2],0.0f);
 			glfwPollEvents();
 		}
 	}
-	private void drawSands(Sand sand,float gridSize){
-		for(int i=sand.rowsFilled; i<sand.sand.length; i++){
-			for(int u=0; u<sand.sand[0].length; u++){
-				if( !(sand.sand[i][u] == 0)){
-					drawQuad((float)u * gridSize, (float)i*gridSize, gridSize, gridSize);
-				}
-			}
+	public void drawSandArray(Sand[] tmp, float gridSize, float[] offset){
+		for(int i=0; i<tmp.length; i++){
+			drawSand(tmp[i], gridSize, offset[i]);
 		}
-		drawQuad(0.0f, 0.0f, (float)sand.sand[0].length * gridSize, (float)sand.rowsFilled * gridSize);
 	}
-	private void drawSand(Sand sand,float gridSize){
+	public void drawSand(Sand sand,float gridSize,float offset){
+		try{
 		int[][] c = NumJa.findHCluster(sand.sand, sand.rowsFilled);
+		
 		for(int i=0; i<c.length; i++){
-			drawQuad((float)(c[i][0])*gridSize,(float)(c[i][2])*gridSize,(float)(c[i][1]+1)*gridSize,gridSize);
+			drawQuad((float)(c[i][0])*gridSize,(float)(c[i][2]-offset)*gridSize,(float)(c[i][1]+1)*gridSize,gridSize);
         }
-		drawQuad(0.0f, 0.0f, (float)sand.sand[0].length * gridSize, (float)sand.rowsFilled * gridSize);
+		drawQuad((float)offset* gridSize,0.0f,(float)(sand.sand.length+gridSize) * gridSize ,(float)sand.rowsFilled * gridSize );
+		}catch(Exception e){}	
 	}
-	private void drawMatrix(int[][] array,float gridSize){
-		for(int i=0; i<array.length;i++){
-			for (int u=0; u<array[0].length; u++){
-				if( !(array[i][u] == 0)){
-					drawQuad((float)u * gridSize, (float)i*gridSize, gridSize, gridSize);
-				}
-			}
-		}
-	}
+	
 	private void drawQuad(float x,float y, float width,float height){
 		Random rand = new Random();
 		//float temp = rand.nextFloat();
 		glColor3f(0.0f,0.0f,0.0f);
 		glBegin(GL_POLYGON);
-		glVertex2f(x, y);
-		glVertex2f(x, height+y);
-		glVertex2f(width+x,height+y);
-		glVertex2f(width+x, y);
+		glVertex2f(y,x);
+		glVertex2f(height+y,x);
+		glVertex2f(height+y,width+x);
+		glVertex2f(y,width+x);
 		glEnd();
 		glFlush(); 
 	}
