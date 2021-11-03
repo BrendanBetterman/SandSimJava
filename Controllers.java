@@ -13,6 +13,9 @@ public class Controllers{
 		for(int i=0; i <26; i++){
 			KeyDict.put(tmp + (char)(65+i),65+i);
 		}
+		for(int i=0; i<10; i++){
+			KeyDict.put(tmp + (char)(48+i),48+i);
+		}
 		KeyDict.put("Key_Space",32);
 
 	}

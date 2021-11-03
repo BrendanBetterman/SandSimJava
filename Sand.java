@@ -4,6 +4,7 @@ public class Sand{
     private Random rand = new Random();
     public int rowsFilled = 0; 
     public int[][]sand;
+    public int[] selected= new int[]{0,0};
     public Sand(int[][] grid){
         this.sand = grid;
     }
@@ -22,18 +23,21 @@ public class Sand{
     private int highestPoint(int x){
         int tmp =0;
         for(int i=0; i< sand.length; i++){
-            if(sand[x][i]==1){
+            if(sand[x][i]!=0){
                 tmp=i;
             }
         }
         return tmp;
     }
+    
     public void remove(int x,int y){
         if(y <= highestPoint(x)){
             this.sand[x][highestPoint(x)] = 0;
         }
     }
-    
+    public void addtype(int x,int y ,int type){
+        this.sand[x][y] = type;
+    }
     public void add(int x,int y){
         this.sand[x][y] = 1;
     }
@@ -43,9 +47,9 @@ public class Sand{
         }
     }
     
-    private void swap(int x1,int y1,int x2,int y2){
+    private void swap(int x1,int y1,int x2,int y2,int type){
         this.sand[x1][y1] = 0;
-        this.sand[x2][y2] = 1;
+        this.sand[x2][y2] = type;
     }
     private void checkRowFill(){
         int temp=0;
@@ -60,55 +64,56 @@ public class Sand{
             temp =0;
         }
     }
+    public void regularGravity(){
+        if(sand[this.selected[0]][this.selected[1]-1] == 0){
+            //move down{up matrix inverted}
+            swap(this.selected[0], this.selected[1], this.selected[0], this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+        }else {
+            //both side are open randomly pick side.
+            if(this.selected[0]!=sand.length-1 && this.selected[0]!=0){
+                if(sand[this.selected[0]-1][this.selected[1]-1]==0 && sand[this.selected[0]+1][this.selected[1]-1]==0 ){
+                    if(rand.nextBoolean()){
+                        swap(this.selected[0], this.selected[1], this.selected[0]+1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                    }else{
+                        swap(this.selected[0], this.selected[1], this.selected[0]-1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                    }
+                }else if(sand[this.selected[0]-1][this.selected[1]-1]==0){
+                    swap(this.selected[0], this.selected[1], this.selected[0]-1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                }else if(sand[this.selected[0]+1][this.selected[1]-1]==0){
+                    swap(this.selected[0], this.selected[1], this.selected[0]+1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                }
+            }else{
+                if(this.selected[0]!=0){
+                    if(sand[this.selected[0]-1][this.selected[1]-1]==0){
+                        swap(this.selected[0], this.selected[1], this.selected[0]-1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                    }
+                }else if(sand[this.selected[0]+1][this.selected[1]-1]==0){
+                    swap(this.selected[0], this.selected[1], this.selected[0]+1, this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                }
+            }  
+        }
+    }
+
     private boolean canMove(int x, int y){
         if (x >0 && x<this.sand.length-1){
             //wips
         }
         return true;
     }
+
+
     public void update(){
         //checkRowFill();
         for(int i=rowsFilled; i<sand[0].length; i++){//i = y u= x
             for(int u=0; u<sand.length; u++){
                 //Check If new row has been filled.
-                /*if(i == rowsFilled){
-                    if (checkRowFill(sand[i])){
-                        rowsFilled =i+1;
-                        System.out.println("Filled" + i);
-                    }
-                }*/
-                if(i>rowsFilled && i<sand[0].length && sand[u][i] ==1){
+                if(i>rowsFilled && i<sand[0].length && sand[u][i] !=0){//changed
                     //Check If spot below is empty
-                    //System.out.println(sand[i-1][u] == 0);
-                    if(sand[u][i-1] == 0){
-                        //move down{up matrix inverted}
-                        swap(u, i, u, i-1);
-                    }else {
-                        //both side are open randomly pick side.
-                        if(u!=sand.length-1 && u!=0){
-                            if(sand[u-1][i-1]==0 && sand[u+1][i-1]==0 ){
-                                if(rand.nextBoolean()){
-                                    swap(u, i, u+1, i-1);
-                                }else{
-                                    swap(u, i, u-1, i-1);
-                                }
-                            }else if(sand[u-1][i-1]==0){
-                                swap(u, i, u-1, i-1);
-                            }else if(sand[u+1][i-1]==0){
-                                swap(u, i, u+1, i-1);
-                            }else{
-                                //do nothing
-                            }
-                        }else{
-                            if(u!=0){
-                                if(sand[u-1][i-1]==0){
-                                    swap(u, i, u-1, i-1);
-                                }
-                            }else if(sand[u+1][i-1]==0){
-                                swap(u, i, u+1, i-1);
-                            }
-                        }  
-                    }
+                    this.selected[0] = u;
+                    this.selected[1] =i;
+                    SandType.moveFromType(sand[u][i],this);
+                    //this.regularGravity();
+                    
                 }
             }
         }

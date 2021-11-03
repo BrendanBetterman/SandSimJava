@@ -24,6 +24,7 @@ public class GameLoop{
     private int nframes = 0;
     private ChunkBorders chunk = new ChunkBorders();
     private Controllers controls = new Controllers();
+    private int sandType = 1;
     public GameLoop(int worldSize){
         this.worldSize = worldSize;
         SandList = new Sand[worldSize];
@@ -87,10 +88,13 @@ public class GameLoop{
         //Only update the previous chunk and the next chunk does wrap.
         
         int tmpChunks = (int)offset/chunkSize;
-        for(int i = tmpChunks;i<tmpChunks+3;i++ ){
-            SandList[wrapList(i)].update();
-            
+        if(! controls.GetKey("Key_Space")){
+            for(int i = tmpChunks;i<tmpChunks+3;i++ ){
+                SandList[wrapList(i)].update();
+                
+            }
         }
+
         chunk.update(SandList[wrapList(tmpChunks)],SandList[wrapList(tmpChunks+1)],SandList[wrapList(tmpChunks+2)]);
         glfwGetWindowSize(SandSim.window,null,heightBuffer);
         S_height = heightBuffer.get(0);
@@ -108,6 +112,24 @@ public class GameLoop{
         if(offset >=(chunkSize*worldSize)){
             offset = 0f;
         }
+        if(controls.GetKey("Key_1")){
+            this.sandType = 1;
+        }
+        if(controls.GetKey("Key_2")){
+            this.sandType = 2;
+        }
+        if(controls.GetKey("Key_3")){
+            this.sandType = 3;
+        }
+        if(controls.GetKey("Key_4")){
+            this.sandType = 4;
+        }
+        if(controls.GetKey("Key_5")){
+            this.sandType = 5;
+        }
+        if(controls.GetKey("Key_6")){
+            this.sandType = 6;
+        }
         if(controls.MouseOnClick("Mouse_Left")){
             int cursorX = (int)SandSim.getCursorPosX(SandSim.window)/(int)gridSize;
             int cursorY = (int)SandSim.getCursorPosY(SandSim.window)/(int)gridSize;
@@ -119,7 +141,8 @@ public class GameLoop{
                 int firstChunk = (int)offset/chunkSize-1;
                 int xoffset = (int)(offset+.5f) - (firstChunk*chunkSize+chunkSize);
                 int relCurX = ((cursorX+xoffset)%chunkSize);
-                SandList[wrapList(tmpCurChunk)].add(relCurX,relCurY);
+                SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,this.sandType);
+                //System.out.println(NumJa.stringArray(SandList[wrapList(tmpCurChunk)].sand));
             }
         }
         if(controls.MouseOnClick("Mouse_Right")){

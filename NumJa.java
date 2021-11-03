@@ -54,33 +54,50 @@ public class NumJa{
     public static int[][] findHCluster(int[][] sand,int rowsFilled){
         ArrayList<int[]> clust = new ArrayList<int[]>();
         int clustIndex =0;
+        int lastType = 0;//changed
         for(int i=rowsFilled; i<sand.length; i++){//rows
 			for(int u=0; u<sand[0].length; u++){//collumns
                 if(u==0){//if on edge
                     //don't index before
-                    if(sand[i][u]==1){
-                        
-                        clust.add(new int[]{u,0,i});
+                    if(sand[i][u]!=0){
+                        clust.add(new int[]{u,0,i,sand[i][u]});
+                        lastType= sand[i][u];
                         clustIndex++;
                     }
                 }else{
                     //Find if there is sand 
                     //Check front and back to see if it can cluster
-                    if(sand[i][u]==1){
-                        if(sand[i][u-1]==0){
-                            
-                            clust.add(new int[]{u,0,i});
+                    if(sand[i][u]!=0){
+                       /* if(sand[i][u-1]==0){
+                            clust.add(new int[]{u,0,i,sand[i][u]});
+                            lastType= sand[i][u];
+                            clustIndex++;
+                        }else if(sand[i][u-1] != lastType){
+                            clust.add(new int[]{u,0,i,sand[i][u]});
+                            lastType= sand[i][u];
                             clustIndex++;
                         }else{
                             //System.out.println("cluster found");
-                            clust.set(clustIndex-1,new int[]{clust.get(clustIndex-1)[0],u-clust.get(clustIndex-1)[0],i});
+                            clust.set(clustIndex-1,new int[]{clust.get(clustIndex-1)[0],u-clust.get(clustIndex-1)[0],i,clust.get(clustIndex-1)[3]});
+                        }*/
+                        if(sand[i][u-1] != lastType && sand[i][u-1] !=0){
+                            clust.add(new int[]{u,0,i,sand[i][u]});
+                            lastType= sand[i][u];
+                            clustIndex++;
+                        }else if(sand[i][u-1] == lastType && lastType !=0){
+                            clust.set(clustIndex-1,new int[]{clust.get(clustIndex-1)[0],u-clust.get(clustIndex-1)[0],i,lastType});
+                            
+                        }else{
+                            clust.add(new int[]{u,0,i,sand[i][u]});
+                            lastType= sand[i][u];
+                            clustIndex++;
                         }
                     }
                 }
             }
         }
         
-        int[][] temp = new int[clustIndex][3];
+        int[][] temp = new int[clustIndex][4];
         for (int i =0;i<clustIndex;i++){
             temp[i] = clust.get(i);
         }
