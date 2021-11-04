@@ -5,18 +5,21 @@ Required Libaries
 
 https://www.lwjgl.org/download
 
-Objects
--------
+How To install
+-----------------
 
-Sand 
+Extract lwjgl to c:\java\lwjgl
+click buildrun.bat
 
-Methods
--------
-updata() This updates the sand so it falls one time
+How To Play
+--------------
 
-add(int x , int y) adds a piece of sand at those cords
-
-add() adds a piece of sand randomly above the fill line.
+A and D are the side scrolling keys
+Num 1-6 are the differnt sand
+1-3 are differnt colored sand that fall normally
+4 doesn't fall
+5 is fire that burns plants
+6 is a plant that grows and doesn't fall like sand but still falls.
 
 
 
