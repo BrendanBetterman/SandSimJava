@@ -11,7 +11,11 @@ Have the newest jdk install
 
 Extract lwjgl to c:\java\lwjgl
 
-click buildrun.bat
+click build.bat
+
+Hit any key, then it'll close.
+
+click run.bat
 
 Hit any key, then it'll launch.
 
