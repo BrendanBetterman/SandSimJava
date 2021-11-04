@@ -156,7 +156,7 @@ public class GameLoop{
                 int firstChunk = (int)offset/chunkSize-1;
                 int xoffset = (int)(offset+.5f) - (firstChunk*chunkSize+chunkSize);
                 int relCurX = ((cursorX+xoffset)%chunkSize);
-                SandList[wrapList(tmpCurChunk)].remove(relCurX,relCurY);
+                SandList[wrapList(tmpCurChunk)].removeHighest(relCurX,relCurY);
             }
         }
 

@@ -1,4 +1,5 @@
 public class SandType{
+    //https://coolors.co/1f1a20-221d23-4f3824-d1603d-d78d52-ddb967-7b7d26-d0e37f-dceaa0
     private static float RGBToF(int a){
         return (float)((float)a/256);
     }
@@ -10,17 +11,31 @@ public class SandType{
             case 1:
             case 2:
             case 3:
-            case 4:
-            case 5:
+            
                 //regular Gravity
-                sand.regularGravity();
+                sand.sandGravity();
+                break;
+            case 5:
+                sand.structGravity();
+                sand.burnout();
+                sand.burn();
                 break;
             case 6:
                 //grow
+                sand.grow();
+                sand.structGravity();
                 break;
             default:
                 //no Gravity
                 break;
+        }
+    }
+    public static boolean flamable(int type){
+        switch(type){
+            case 6:
+                return true;
+            default:
+                return false;
         }
     }
     public static float[] colorFromType(int type){

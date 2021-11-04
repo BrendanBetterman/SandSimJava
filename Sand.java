@@ -29,8 +29,10 @@ public class Sand{
         }
         return tmp;
     }
-    
     public void remove(int x,int y){
+        this.sand[x][y] = 0;
+    }
+    public void removeHighest(int x,int y){
         if(y <= highestPoint(x)){
             this.sand[x][highestPoint(x)] = 0;
         }
@@ -64,7 +66,71 @@ public class Sand{
             temp =0;
         }
     }
-    public void regularGravity(){
+    public void structGravity(){
+        try{
+            if(!(sand[this.selected[0]-1][this.selected[1]-1] != 0 || sand[this.selected[0]+1][this.selected[1]-1] != 0 )){//sides are touching
+                if(sand[this.selected[0]][this.selected[1]-1] == 0 ){
+                    swap(this.selected[0], this.selected[1], this.selected[0], this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
+                }
+            }
+        }catch(Exception e){}
+        
+    }
+    public void burnout(){
+        if(rand.nextInt(16) ==1){
+            remove(this.selected[0],this.selected[1]);
+        }
+    }
+    public void burn(){
+        int size = 3;
+        int midpoint = size/2;
+        if(rand.nextInt(4)==1){
+            try{
+                if(SandType.flamable(sand[this.selected[0]][this.selected[1]+1])){
+                    addtype(this.selected[0], this.selected[1]+1, sand[this.selected[0]][this.selected[1]]);
+                }
+                if(SandType.flamable(sand[this.selected[0]-1][this.selected[1]+1])){
+                    addtype(this.selected[0]-1, this.selected[1]+1, sand[this.selected[0]][this.selected[1]]);
+                }
+                if(SandType.flamable(sand[this.selected[0]+1][this.selected[1]+1])){
+                    addtype(this.selected[0]+1, this.selected[1]+1, sand[this.selected[0]][this.selected[1]]);
+                }
+                if(SandType.flamable(sand[this.selected[0]][this.selected[1]-1])){
+                    addtype(this.selected[0], this.selected[1]-1, sand[this.selected[0]][this.selected[1]]);
+                }
+                if(SandType.flamable(sand[this.selected[0]-1][this.selected[1]-1])){
+                    addtype(this.selected[0]-1, this.selected[1]-1, sand[this.selected[0]][this.selected[1]]);
+                }
+                if(SandType.flamable(sand[this.selected[0]+1][this.selected[1]-1])){
+                    addtype(this.selected[0]+1, this.selected[1]-1, sand[this.selected[0]][this.selected[1]]);
+                }
+            }catch(Exception e){}
+        }
+    }
+    public void grow(){
+        if(rand.nextInt(16) == 1){
+            try{
+                //System.out.println(rand.nextInt(3)-1);
+                if(sand[this.selected[0]][this.selected[1]+1] == 0){
+                    int tmp = this.selected[0]+rand.nextInt(3)-1;
+                    if (sand[tmp][this.selected[1]+1] == 0){
+                        //if(tmp + this.selected[0] >= sand.length || tmp + this.selected[0] <=0){
+                           // if(this.selected[1]+1 >= sand[0].length || this.selected[1]+1 <= 0){
+                                addtype(tmp,this.selected[1]+1,sand[this.selected[0]][this.selected[1]]);
+                          //  }
+                            
+                       // }
+                        
+                    }
+                    
+                }
+                
+            }catch(Exception e){
+            }
+        }
+        
+    }
+    public void sandGravity(){
         if(sand[this.selected[0]][this.selected[1]-1] == 0){
             //move down{up matrix inverted}
             swap(this.selected[0], this.selected[1], this.selected[0], this.selected[1]-1,sand[this.selected[0]][this.selected[1]]);
@@ -93,7 +159,7 @@ public class Sand{
             }  
         }
     }
-
+    
     private boolean canMove(int x, int y){
         if (x >0 && x<this.sand.length-1){
             //wips
@@ -112,7 +178,7 @@ public class Sand{
                     this.selected[0] = u;
                     this.selected[1] =i;
                     SandType.moveFromType(sand[u][i],this);
-                    //this.regularGravity();
+                    //this.sandGravity();
                     
                 }
             }
