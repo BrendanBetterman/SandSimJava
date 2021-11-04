@@ -7,9 +7,13 @@ https://www.lwjgl.org/download
 
 How To install
 -----------------
+Have the newest jdk install
 
 Extract lwjgl to c:\java\lwjgl
+
 click buildrun.bat
+
+Hit any key, then it'll launch.
 
 How To Play
 --------------
