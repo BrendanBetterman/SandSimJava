@@ -21,6 +21,9 @@ Hit any key, then it'll launch.
 
 How To Play
 --------------
+Left click/hold to place sand.
+
+Right click/hold to remove sand.
 
 A and D are the side scrolling keys
 
