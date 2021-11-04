@@ -16,7 +16,7 @@ How To Play
 
 A and D are the side scrolling keys
 
-Num 1-6 are the differnt sand
+1-6 are the differnt sand on keyboard above letters.
 
 1-3 are differnt colored sand that fall normally
 
