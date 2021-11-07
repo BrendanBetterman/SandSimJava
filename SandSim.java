@@ -109,12 +109,10 @@ public class SandSim {
 		// bindings available for use.
 		GL.createCapabilities();
 
-		Random rand = new Random();
-		float[] oldRGB = new float[]{0.0f,0.0f,0.0f};
-		float[] newRGB = NumJa.randFloatArray(rand, 3);
+		
 		int height = 720;
 		int width = 720;
-		GameLoop gameLoop = new GameLoop(5);
+		
 		// Set the clear color
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glViewport(0, 0, width, height);
@@ -126,7 +124,8 @@ public class SandSim {
         
 		glMatrixMode(GL_MODELVIEW);
 		float gridSize =10.0f;
-		Sand sand = new Sand(new int[height/(int)gridSize][width/(int)gridSize]);
+		GameLoop gameLoop = new GameLoop(5,height/(int)gridSize);
+		//Sand sand = new Sand(new int[width/(int)gridSize][height/(int)gridSize]);
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
@@ -141,26 +140,7 @@ public class SandSim {
 			nframes+=1;
 			
 			if (nframes %1 ==0){
-				/*Sync screen
-				glfwGetWindowSize(SandSim.window,widthBuffer,heightBuffer);
-        		int Cheight = heightBuffer.get(0);
-				int Cwidth = widthBuffer.get(0);
-				glViewport(0, 0, Cwidth, Cheight);
-				*/
-				//sand.add(70,width/(int)2/(int)gridSize);
-				
-               // glfwGetWindowSize(window,null,heightBuffer);
-               // S_height = heightBuffer.get(0);
-                //sand.update();
-				/*oldRGB = NumJa.lerp(oldRGB,newRGB,0.05f);
-				if (oldRGB[0] > newRGB[0] -0.0001f){
-					newRGB = NumJa.randFloatArray(rand, 3);
-				}*/
-				//for(int k=0;k<2; k++){
 				gameLoop.update();
-				//}
-				
-				
             }
 			drawSandArray(gameLoop.draw(),gridSize,gameLoop.getOffset());
            	

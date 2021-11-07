@@ -17,6 +17,8 @@ public class GameLoop{
     private Sand[] SandList;
     private int worldSize;
     private int chunkSize = 72;
+    private int xchunk;
+    private int ychunk;
     private float offset =0f;
     private float gridSize=10.0f;
     private int S_height =0;
@@ -25,11 +27,13 @@ public class GameLoop{
     private ChunkBorders chunk = new ChunkBorders();
     private Controllers controls = new Controllers();
     private int sandType = 1;
-    public GameLoop(int worldSize){
+    public GameLoop(int worldSize,int xchunk){
         this.worldSize = worldSize;
+        this.chunkSize =xchunk;
+        
         SandList = new Sand[worldSize];
         for (int i=0; i<worldSize; i++){
-            SandList[i] = new Sand(new int[chunkSize][chunkSize]);
+            SandList[i] = new Sand(new SandObj[xchunk][xchunk]);
         }
         init();
     }
@@ -130,6 +134,9 @@ public class GameLoop{
         if(controls.GetKey("Key_6")){
             this.sandType = 6;
         }
+        if(controls.GetKey("Key_7")){
+            this.sandType = 7;
+        }
         if(controls.MouseOnClick("Mouse_Left")){
             int cursorX = (int)SandSim.getCursorPosX(SandSim.window)/(int)gridSize;
             int cursorY = (int)SandSim.getCursorPosY(SandSim.window)/(int)gridSize;
@@ -141,7 +148,12 @@ public class GameLoop{
                 int firstChunk = (int)offset/chunkSize-1;
                 int xoffset = (int)(offset+.5f) - (firstChunk*chunkSize+chunkSize);
                 int relCurX = ((cursorX+xoffset)%chunkSize);
-                SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,this.sandType);
+                if(controls.GetKey("Key_Q")){
+                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,this.sandType);
+                }else{
+                    SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,this.sandType);
+                }
+                
                 //System.out.println(NumJa.stringArray(SandList[wrapList(tmpCurChunk)].sand));
             }
         }
@@ -156,7 +168,11 @@ public class GameLoop{
                 int firstChunk = (int)offset/chunkSize-1;
                 int xoffset = (int)(offset+.5f) - (firstChunk*chunkSize+chunkSize);
                 int relCurX = ((cursorX+xoffset)%chunkSize);
-                SandList[wrapList(tmpCurChunk)].removeHighest(relCurX,relCurY);
+                if(controls.GetKey("Key_Q")){
+                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,0);
+                }else{
+                    SandList[wrapList(tmpCurChunk)].removeHighest(relCurX,relCurY);
+                }
             }
         }
 

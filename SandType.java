@@ -8,22 +8,26 @@ public class SandType{
     }
     public static void moveFromType(int type,Sand sand){
         switch(type){
-            case 1:
+            case 1: 
             case 2:
             case 3:
-            
                 //regular Gravity
                 sand.sandGravity();
                 break;
             case 5:
                 sand.structGravity();
-                sand.burnout();
+                sand.burnout(16);
                 sand.burn();
+                //sand.grow();
                 break;
             case 6:
                 //grow
                 sand.grow();
                 sand.structGravity();
+                //sand.harden(4);
+                break;
+            case 7:
+                sand.waterGravity();
                 break;
             default:
                 //no Gravity
@@ -33,6 +37,7 @@ public class SandType{
     public static boolean flamable(int type){
         switch(type){
             case 6:
+            case 4:
                 return true;
             default:
                 return false;
@@ -52,6 +57,8 @@ public class SandType{
                 return new float[]{RGBToF(34),RGBToF(29),RGBToF(35),1.0f};
             case 6:
                 return new float[]{RGBToF(123),RGBToF(125),RGBToF(38),1.0f};
+            case 7:
+                return new float[]{RGBToF(96),RGBToF(123),RGBToF(125),1.0f};
             default:
                 return new float[]{0.0f,0.0f,0.0f,1.0f};
         }

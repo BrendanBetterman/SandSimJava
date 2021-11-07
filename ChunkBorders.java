@@ -2,15 +2,15 @@
 public class ChunkBorders{
     private void checkEdge(Sand sand1,Sand sand2,int x){
         for(int i=0; i <sand1.sand[0].length-1; i++){// only edges
-            if(sand1.sand[x][i] != 0){//if sand
+            if(sand1.sand[x][i].type != 0){//if sand
                 if(i>1){
-                    if(sand1.sand[x][i-1] ==0){
+                    if(sand1.sand[x][i-1].type ==0){
                         //should be handed in sand
                         //sand1.remove(x,i);
                        // sand1.add(x,i-1);
-                    }else if(sand2.sand[sand1.sand.length-x-1][i-1] == 0){
+                    }else if(sand2.sand[sand1.sand.length-x-1][i-1].type == 0){
                         
-                        sand2.addtype(sand1.sand.length-x-1,i-1,sand1.sand[x][i]);
+                        sand2.addtype(sand1.sand.length-x-1,i-1,sand1.sand[x][i].type);
                         sand1.remove(x,i);
                     }else{
                         //break;
