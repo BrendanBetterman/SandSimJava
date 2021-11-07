@@ -40,3 +40,5 @@ Q changes brush size from 1x1 to 3x3
 6 is a plant that grows and doesn't fall like sand but still falls.
 
 7 is water, doesn't put out fire yet.
+
+holding space pauses the game.
