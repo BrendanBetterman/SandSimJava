@@ -11,16 +11,16 @@ Have the newest jdk install
 
 Extract lwjgl to c:\java\lwjgl
 
-click build.bat
+click buildJar.bat
 
 Hit any key, then it'll close.
 
 click run.bat
 
-Hit any key, then it'll launch.
-
 How To Play
 --------------
+Escape To quit
+
 Left click/hold to place sand.
 
 Right click/hold to remove sand.
@@ -40,5 +40,7 @@ Q changes brush size from 1x1 to 3x3
 6 is a plant that grows and doesn't fall like sand but still falls.
 
 7 is water, doesn't put out fire yet.
+
+8 will place a catus.
 
 holding space pauses the game.
