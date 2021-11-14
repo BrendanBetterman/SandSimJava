@@ -57,35 +57,46 @@ public class Gravity{
             } 
         }
     }
-
     public static void waterGravity(int x, int y, Sand sand){
-        //if(rand.nextInt(2) == 1){
-        int curX = x;
-        int curY = y;
-        int curType = sand.sand[curX][curY].type;
-        if(sand.sand[curX][curY-1].type == 0){
-            sand.swap(curX,curY,curX,curY-1,curType);
-            
+        int curType = sand.sand[x][y].type;
+        int dir = sand.sand[x][y].xSpeed;
+        //check below
+        while(dir == 0){
+                dir = -1;
+                
+               // System.out.println(sand.sand[x][y].xSpeed);
+            }
+        sand.sand[x][y].xSpeed = dir;
+        if(sand.sand[x][y-1].type == 0){
+            sand.swap(x,y,x,y-1,curType);
         }else{
-            if(sand.rand.nextInt(2) == 1){
-            if(sand.sand[curX][curY].xSpeed ==0 ){
-                int tmp =0;
-                while (tmp ==0){
-                    tmp = sand.rand.nextInt(2)-1;
-                }
-                sand.sand[curX][curY].xSpeed = tmp;
-            }
                 try{
-                    if(sand.sand[curX+1][curY].type == 0){
-                        sand.swap(curX,curY, curX+1, curY, curType);
-                        
-                    }else if (sand.sand[curX-1][curY].type == 0){
-                        sand.swap(curX,curY, curX-1, curY, curType);
-                    }else{
-                        sand.sand[curX][curY].xSpeed *=-1;
-                    }
-                }catch(Exception e){}
-            }
+                if(sand.sand[x+dir][y-1].type == 0){
+                    sand.swap(x,y,x+dir,y-1,curType);
+                    sand.sand[x][y].xSpeed *= -1;
+                }else
+                if(sand.sand[x-dir][y-1].type == 0){
+                    sand.swap(x,y,x-dir,y-1,curType);
+                    
+                }else
+                if (sand.sand[x-dir][y].type == 0){
+                    sand.swap(x,y,x-dir,y,curType);   
+                                   
+                }else
+                if (sand.sand[x+dir][y].type == 0){
+                    sand.swap(x,y,x+dir,y,curType); 
+                    sand.sand[x][y].xSpeed *= -1;  
+
+                }}catch(Exception e){}
+                try{
+                    if (sand.sand[x-dir][y].type == 7){
+                        sand.sand[x][y].xSpeed =sand.sand[x-dir][y].xSpeed;                  
+                    }else
+                    if (sand.sand[x+dir][y].type == 7){
+                        sand.sand[x][y].xSpeed =sand.sand[x+dir][y].xSpeed;    
+                    }}catch(Exception e){}
         }
+
     }
+    
 }

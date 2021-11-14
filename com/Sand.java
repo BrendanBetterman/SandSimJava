@@ -73,7 +73,7 @@ public class Sand{
     public void update(){
         //checkRowFill();
         
-        for(int i=rowsFilled; i<sand[0].length; i++){//i = y u= x
+        for(int i=0; i<sand[0].length; i++){//i = y u= x
             for(int u=0; u<sand.length; u++){
                 //Check If new row has been filled.
                 

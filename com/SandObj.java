@@ -1,7 +1,7 @@
 package com;
 public class SandObj{
     public int type;
-    public int xSpeed;
+    public int xSpeed =0;
     public int ySpeed;
     public int level;
     public boolean isfalling = true;

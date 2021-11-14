@@ -112,7 +112,7 @@ public class SandSim {
 		// bindings available for use.
 		GL.createCapabilities();
 
-		float gridSize =10.0f;
+		float gridSize =5.0f;
 		int height = 1080;
 		int width = 1920;
 		
@@ -128,7 +128,7 @@ public class SandSim {
 		glMatrixMode(GL_MODELVIEW);
 		
 		glViewport(0, 0, width, height);
-		GameLoop gameLoop = new GameLoop(5,width/(int)gridSize,height/(int)gridSize);
+		GameLoop gameLoop = new GameLoop(5,width/(int)gridSize,height/(int)gridSize,gridSize);
 		//Sand sand = new Sand(new int[width/(int)gridSize][height/(int)gridSize]);
 
 		// Run the rendering loop until the user has attempted to close
@@ -144,7 +144,10 @@ public class SandSim {
 			nframes+=1;
 			
 			if (nframes %1 ==0){
-				gameLoop.update();
+				for(int i=0; i<2; i++){
+					gameLoop.update();
+				}
+				
             }
 				drawSandArray(gameLoop.draw(),gridSize,gameLoop.getOffset());
 				//drawPoly(new int[][]{{5,10},{5,15},{10,20},{20,15},{19,70}}, gridSize);
@@ -167,6 +170,7 @@ public class SandSim {
 		}
 	}
 	public void drawSand(Sand sand,float gridSize,float offset){
+		
 		try{
 		int[][] c = NumJa.findHCluster(sand.sand, sand.rowsFilled);
 		//System.out.println(NumJa.stringArray(c));
@@ -175,6 +179,8 @@ public class SandSim {
         }
 		drawQuad((float)offset* gridSize,0.0f,(float)(sand.sand.length+gridSize) * gridSize ,(float)sand.rowsFilled * gridSize,1);
 		}catch(Exception e){}	
+		
+		glFlush(); 
 	}
 	
 	private void drawQuad(float x,float y, float width,float height,int type){
@@ -184,14 +190,14 @@ public class SandSim {
 		tmp = SandType.colorFromType(type);
 		
 		glColor4f(tmp[0],tmp[1],tmp[2],tmp[3]);
-		
 		glBegin(GL_POLYGON);
+		
 		glVertex2f(y,x);
 		glVertex2f(height+y,x);
 		glVertex2f(height+y,width+x);
 		glVertex2f(y,width+x);
 		glEnd();
-		glFlush(); 
+		
 	}
 	private void drawSandMarch(Sand sand,float gridSize){
 		int[][] c = NumJa.marchingSquares(sand.sand);

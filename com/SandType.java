@@ -18,9 +18,11 @@ public class SandType{
                 Gravity.sandGravity(sand.selected[0],sand.selected[1],sand);
                 break;
             case 5:
-                Gravity.structGravity(sand.selected[0],sand.selected[1],sand);
-                Burn.burnout(sand.selected[0],sand.selected[1],sand,16);
                 Burn.burnFlamable(sand.selected[0],sand.selected[1],sand);
+                Burn.burnout(sand.selected[0],sand.selected[1],sand,16);
+                Gravity.structGravity(sand.selected[0],sand.selected[1],sand);
+                
+                
                 //sand.grow();
                 break;
             case 6:
@@ -64,14 +66,14 @@ public class SandType{
             case 1:
                 return new float[]{RGBToF(221),RGBToF(185),RGBToF(103),1.0f};//sand
             case 2:
-            case 5:
+            
                 return new float[]{RGBToF(209),RGBToF(96),RGBToF(61),1.0f};//red sand
             case 3:
                 return new float[]{RGBToF(215),RGBToF(141),RGBToF(82),1.0f};//orange sand
             case 4:
             case 15:
                 return new float[]{RGBToF(79),RGBToF(56),RGBToF(36),1.0f};//brown
-            
+            case 5:
             case 16:
                 return new float[]{RGBToF(34),RGBToF(29),RGBToF(35),1.0f};//black
             case 6:

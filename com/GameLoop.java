@@ -27,10 +27,11 @@ public class GameLoop{
     private ChunkBorders chunk = new ChunkBorders();
     private Controllers controls = new Controllers();
     private int sandType = 1;
-    public GameLoop(int worldSize,int xchunk,int ychunk){
+    public GameLoop(int worldSize,int xchunk,int ychunk,float gridSize){
         this.worldSize = worldSize;
         this.xchunk =xchunk;
         this.ychunk = ychunk;
+        this.gridSize = gridSize;
         SandList = new Sand[worldSize];
         for (int i=0; i<worldSize; i++){
             SandList[i] = new Sand(new SandObj[xchunk][ychunk]);
@@ -38,21 +39,21 @@ public class GameLoop{
         init();
     }
     private void init(){
-        Noise noise = new Noise(new Random(2),2f,worldSize*chunkSize,worldSize*chunkSize);
+        Noise noise = new Noise(new Random(1),2f,worldSize*chunkSize,worldSize*chunkSize);
         noise.initialise();
         //System.out.println(NumJa.stringArray(noise.grid_));
         System.out.println((worldSize*chunkSize));
-        offset = chunkSize;
+        offset = xchunk;
         int k=0;
-        int ktot = worldSize*chunkSize;
+        int ktot = worldSize*xchunk;
         for (int i=0; i<worldSize; i++){
-            int[] plist = new int[chunkSize];
-            for(int u=0; u<chunkSize;u++){//wip
+            int[] plist = new int[xchunk];
+            for(int u=0; u<xchunk;u++){//wip
                 //generate noise
-                int xoff = (int)Math.round(chunkSize*(Math.cos((float)((u*i))/(worldSize*chunkSize)) +1));
-                int yoff = (int)Math.round(chunkSize*(Math.sin((float)((u*i))/(worldSize*chunkSize)) +1));
+                int xoff = i;
                 
-                plist[u] = (int)Math.round(10*noise.grid_[xoff][yoff]);
+                
+                plist[u] = (int)Math.round(100*noise.grid_[xoff][0]);
             }
             SandList[i].generate(plist);
         }
