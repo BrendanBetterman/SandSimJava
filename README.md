@@ -9,7 +9,7 @@ How To install
 -----------------
 Have the newest jdk install
 
-Extract lwjgl to c:\java\lwjgl
+Extract LWJGL to c:\java\LWJGL
 
 click buildJar.bat
 
