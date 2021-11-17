@@ -24,7 +24,7 @@ public class SandSim {
     private int S_height;
 	private IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
 	private IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
-	
+	public static float gridSize =5.0f;
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 		//System.out.println("Hellow LWJGL");
@@ -112,7 +112,7 @@ public class SandSim {
 		// bindings available for use.
 		GL.createCapabilities();
 
-		float gridSize =5.0f;
+		
 		int height = 1080;
 		int width = 1920;
 		
@@ -128,7 +128,7 @@ public class SandSim {
 		glMatrixMode(GL_MODELVIEW);
 		
 		glViewport(0, 0, width, height);
-		GameLoop gameLoop = new GameLoop(5,width/(int)gridSize,height/(int)gridSize,gridSize);
+		GameLoop gameLoop = new GameLoop(6,width/(int)gridSize,height/(int)gridSize,gridSize);
 		//Sand sand = new Sand(new int[width/(int)gridSize][height/(int)gridSize]);
 
 		// Run the rendering loop until the user has attempted to close

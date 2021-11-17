@@ -18,6 +18,8 @@ public class Controllers{
 			KeyDict.put(tmp + (char)(48+i),48+i);
 		}
 		KeyDict.put("Key_Space",32);
+		KeyDict.put("Key_Shift",340);
+		//KeyDict.put("Key_Ctrl",17);
 
 	}
     private double getCursorPosX(long windowID) {
@@ -45,7 +47,7 @@ public class Controllers{
 				return i;
 			}
 		}
-		return -1;
+		return 0;
 	}
 	private int getArrayPos(int[]a,int b){
 		for (int i=0; i<a.length; i++){
@@ -53,8 +55,8 @@ public class Controllers{
 				return i;
 			}
 		}
-		System.out.println("In Controllers.java line getArrayPos");
-		return -1;		
+		//System.out.println("In Controllers.java line getArrayPos");
+		return 0;		
 	}
     public void GetMouse(IntBuffer x, IntBuffer y){
         x.put(0,(int)getCursorPosX(SandSim.window));
@@ -73,11 +75,14 @@ public class Controllers{
 	
 	public boolean KeyOnRelease(String key){
 		if(!GetKey(key) && (inArray(lastPressed,this.KeyDict.get(key)))){
-			lastPressed[getArrayPos(lastPressed, this.KeyDict.get(key))]= 0;
+			while((inArray(lastPressed,this.KeyDict.get(key)))){
+				lastPressed[getArrayPos(lastPressed, this.KeyDict.get(key))]= 0;
+			}
+			
 			return true;
 		}else if(GetKey(key)){
 			lastPressed[getFirstZero(lastPressed)] = this.KeyDict.get(key);
-			
+			//System.out.println(this.KeyDict.get(key) +" "+ lastPressed[0]);
 		}
 		return false;
 	}
@@ -85,6 +90,11 @@ public class Controllers{
 		if(GetKey(key) && !(inArray(lastPressed,this.KeyDict.get(key))) && getFirstZero(lastPressed) != -1){
 			lastPressed[getFirstZero(lastPressed)] = this.KeyDict.get(key);
 			return true;
+		}else if(!GetKey(key) ){
+			try{
+				lastPressed[getArrayPos(lastPressed, this.KeyDict.get(key))]= 0;
+			}catch(Exception e){}
+			
 		}
 		return false;
 	}

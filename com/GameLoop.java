@@ -27,6 +27,11 @@ public class GameLoop{
     private ChunkBorders chunk = new ChunkBorders();
     private Controllers controls = new Controllers();
     private int sandType = 1;
+    private int saveMedium = 0;
+    private int wasMedium = 0;
+    private int tmpCurChunk = 0;
+    private int relCurX =0;
+    private Save save = new Save("Save.file");
     public GameLoop(int worldSize,int xchunk,int ychunk,float gridSize){
         this.worldSize = worldSize;
         this.xchunk =xchunk;
@@ -116,74 +121,82 @@ public class GameLoop{
         if(offset >=(xchunk*worldSize)){
             offset = 0f;
         }
-        if(controls.GetKey("Key_1")){
-            this.sandType = 1;
-        }
-        if(controls.GetKey("Key_2")){
-            this.sandType = 2;
-        }
-        if(controls.GetKey("Key_3")){
-            this.sandType = 3;
-        }
-        if(controls.GetKey("Key_4")){
-            this.sandType = 4;
-        }
-        if(controls.GetKey("Key_5")){
-            this.sandType = 5;
-        }
-        if(controls.GetKey("Key_6")){
-            this.sandType = 6;
-        }
-        if(controls.GetKey("Key_7")){
-            this.sandType = 7;
-        }
-        if(controls.GetKey("Key_8")){
-            this.sandType = 8;
-        }
-        if(controls.MouseOnClick("Mouse_Left")){
-            int cursorX = (int)SandSim.getCursorPosX(SandSim.window)/(int)gridSize;
-            int cursorY = (int)SandSim.getCursorPosY(SandSim.window)/(int)gridSize;
-            int relCurY = (ychunk*(int)gridSize)/(int)gridSize-1-cursorY+(S_height - ychunk*(int)gridSize)/(int)gridSize;
-            if (!(cursorX < 0 || cursorX > this.xchunk-1 || relCurY < 0 || relCurY > this.ychunk-1)){
-                int tmpCurChunk = wrapList((cursorX+(int)offset)/(int)xchunk);
-                //SandList[tmpCurChunk].add();
-                //System.out.println(tmpCurChunk);
-                int firstChunk = (int)offset/xchunk-1;
-                int xoffset = (int)(offset+.5f) - (firstChunk*xchunk+xchunk);
-                int relCurX = ((cursorX+xoffset)%xchunk);
-                if(controls.GetKey("Key_Q")){
-                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,this.sandType);
-                }else if(controls.GetKey("Key_W")){
-                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,9,this.sandType);
-                }else{
-                    SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,this.sandType);
-                }
-                
-                //System.out.println(NumJa.stringArray(SandList[wrapList(tmpCurChunk)].sand));
-            }
-        }
-        if(controls.MouseOnClick("Mouse_Right")){
-            int cursorX = (int)SandSim.getCursorPosX(SandSim.window)/(int)gridSize;
-            int cursorY = (int)SandSim.getCursorPosY(SandSim.window)/(int)gridSize;
-            int relCurY = (ychunk*(int)gridSize)/(int)gridSize-1-cursorY+(S_height - ychunk*(int)gridSize)/(int)gridSize;
-            if (!(cursorX < 0 || cursorX > this.xchunk-1 || relCurY < 0 || relCurY > this.ychunk-1)){
-                int tmpCurChunk = wrapList((cursorX+(int)offset)/(int)xchunk);
-                //SandList[tmpCurChunk].add();
-                //System.out.println(tmpCurChunk);
-                int firstChunk = (int)offset/xchunk-1;
-                int xoffset = (int)(offset+.5f) - (firstChunk*xchunk+xchunk);
-                int relCurX = ((cursorX+xoffset)%xchunk);
-                if(controls.GetKey("Key_Q")){
-                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,0);
-                }else if(controls.GetKey("Key_W")){
-                    SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,9,0);
-                }else{
-                    SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,0);
-                }
-                
-                //System.out.println(NumJa.stringArray(SandList[wrapList(tmpCurChunk)].sand));
+        for(int i =1; i<9; i++){
+            if(controls.GetKey("Key_" + i)){
+                this.sandType = i;
             }
         }
         
+        if(controls.GetKey("Key_0")){
+            this.sandType = 10;
+        }
+        if(controls.KeyOnRelease("Key_S")){
+            
+            save.SaveGame(SandList);
+        }
+        if(controls.KeyOnRelease("Key_P")){
+            
+            SandList = save.GetSave(SandList,gridSize);
+
+        }
+        if(controls.GetKey("Key_M")){
+            if(SandSim.gridSize <4.9f){
+                SandSim.gridSize+=0.1f;
+                this.gridSize = SandSim.gridSize;
+            }
+            
+        }
+        if(controls.GetKey("Key_N")){
+            if(SandSim.gridSize>0.2f){
+                SandSim.gridSize-=0.1f;
+                this.gridSize = SandSim.gridSize;
+            }
+            
+        }
+        //mouse Position
+        int cursorX = (int)SandSim.getCursorPosX(SandSim.window)/(int)gridSize;
+        int cursorY = (int)SandSim.getCursorPosY(SandSim.window)/(int)gridSize;
+        int relCurY = (ychunk*(int)gridSize)/(int)gridSize-1-cursorY+(S_height - ychunk*(int)gridSize)/(int)gridSize;
+        
+        if (!(cursorX < 0 || cursorX > this.xchunk-1 || relCurY < 0 || relCurY > this.ychunk-1)){
+            tmpCurChunk = wrapList((cursorX+(int)offset)/(int)xchunk);
+            int firstChunk = (int)offset/xchunk-1;
+            int xoffset = (int)(offset+.5f) - (firstChunk*xchunk+xchunk);
+            relCurX = ((cursorX+xoffset)%xchunk);
+        }
+        if(controls.KeyOnPress("Key_Shift")){
+            saveMedium = SandList[wrapList(tmpCurChunk)].sand[relCurX][relCurY].type;
+        }
+        if(controls.MouseOnClick("Mouse_Left")){
+            if(controls.GetKey("Key_Q")&&controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addcubeNoDel(relCurX,relCurY,3,this.sandType,saveMedium);
+            }else if(controls.GetKey("Key_W")&&controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addcubeNoDel(relCurX,relCurY,9,this.sandType,saveMedium);
+            }else if(controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addtypeNoDel(relCurX,relCurY,this.sandType,saveMedium);
+            }else if(controls.GetKey("Key_Q")){
+                SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,this.sandType);
+            }else if(controls.GetKey("Key_W")){
+                SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,9,this.sandType);
+            }else{
+                SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,this.sandType);
+            }
+        }
+        if(controls.MouseOnClick("Mouse_Right")){
+            if(controls.GetKey("Key_Q")&&controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addcubeNoDel(relCurX,relCurY,3,0,saveMedium);
+            }else if(controls.GetKey("Key_W")&&controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addcubeNoDel(relCurX,relCurY,9,0,saveMedium);
+            }else if(controls.GetKey("Key_Shift")){
+                SandList[wrapList(tmpCurChunk)].addtypeNoDel(relCurX,relCurY,0,saveMedium);
+            }if(controls.GetKey("Key_Q")){
+                SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,3,0);
+            }else if(controls.GetKey("Key_W")){
+                SandList[wrapList(tmpCurChunk)].addcube(relCurX,relCurY,9,0);
+            }else{
+                SandList[wrapList(tmpCurChunk)].addtype(relCurX,relCurY,0);
+            }
+        }
+       
     }
 }

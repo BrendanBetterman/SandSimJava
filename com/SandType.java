@@ -1,5 +1,6 @@
 package com;
 import com.SandMethods.*;
+import com.Lua.*;
 public class SandType{
     //https://coolors.co/1f1a20-221d23-4f3824-d1603d-d78d52-ddb967-7b7d26-d0e37f-dceaa0
     private static float RGBToF(int a){
@@ -28,7 +29,7 @@ public class SandType{
             case 6:
                 //grow
                 Gravity.structGravity(sand.selected[0],sand.selected[1],sand);
-                Grow.catus(sand.selected[0],sand.selected[1],sand);
+                Grow.bush(sand.selected[0],sand.selected[1],sand);
                 //sand.structGravity();
                 //sand.harden(4);
                 break;
@@ -36,7 +37,7 @@ public class SandType{
                 Gravity.waterGravity(sand.selected[0],sand.selected[1],sand);
                 break;
             case 8:
-                MultiStruct.multiBlockStructure(sand.selected[0],sand.selected[1],sand,1);
+                MultiStruct.multiBlockStructure(sand.selected[0],sand.selected[1],sand,2);
                 Gravity.structGravity(sand.selected[0],sand.selected[1],sand);   
                 break;
             case 15:
@@ -44,8 +45,19 @@ public class SandType{
             case 17:
                 Gravity.clusterGravity(sand.selected[0],sand.selected[1],sand);
                 break;
+            case 4:
+                break;
             default:
                 //no Gravity
+                if(sand.selected[0] >1){
+                    SandMethodLua Lua = SandMethodLua.getInstance();
+                if(sand.rand.nextInt(4)==1){
+                    
+                    Lua.luaSand(type,sand);
+                }
+                }
+                
+                
                 break;
         }
     }
@@ -56,6 +68,7 @@ public class SandType{
             case 15:
             case 16:
             case 17:
+            
                 return true;
             default:
                 return false;

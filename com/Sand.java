@@ -6,6 +6,7 @@ public class Sand{
     public Random rand = new Random();
     public int rowsFilled = 0; 
     public SandObj[][]sand;
+    
     public int[] selected= new int[]{0,0};
     private int count =0;
     public Sand(SandObj[][] grid){
@@ -48,6 +49,12 @@ public class Sand{
     public void addtype(int x,int y ,int type){
         this.sand[x][y].type = type;
     }
+    public void addtypeNoDel(int x,int y ,int type,int saveMedium){
+        if(this.sand[x][y].type == saveMedium){
+            this.sand[x][y].type = type;
+        }
+        
+    }
     public void add(int x,int y){
             this.sand[x][y].type = 1;
     }
@@ -61,6 +68,18 @@ public class Sand{
             for(int y = -radius; y <=radius; y++){
                 try{
                     addtype(x1+x, y1+y, type);
+                }catch(Exception e){}
+            }
+        }
+    }
+    public void addcubeNoDel(int x1,int y1,int radius,int type,int saveMedium){
+        for(int x = -radius; x<=radius; x++){
+            for(int y = -radius; y <=radius; y++){
+                try{
+                    
+                        addtypeNoDel(x1+x, y1+y, type,saveMedium);
+                    
+                    
                 }catch(Exception e){}
             }
         }
